@@ -75,48 +75,73 @@ letter-spacing:1px;
 
 #aiReasoning{font-size:13px; color:#cbd5e1; font-style:italic; text-align:center; margin-top:15px; min-height:20px; line-height:1.5;}
 
-/* ===== Floating Mini Road ===== */
-
 #miniRoadBox{
-
     width:180px;
-
-    margin:16px auto 6px;
-
+    margin:16px auto;
     padding:8px;
 
-    background:rgba(15,23,42,.70);
+    position:relative;
+    z-index:10;
 
+    background:rgba(15,23,42,.70);
+    border:1px solid rgba(34,211,238,.18);
     border-radius:16px;
 
-    border:1px solid rgba(34,211,238,.18);
+    backdrop-filter:blur(8px);
 
     box-shadow:
         0 10px 25px rgba(0,0,0,.45),
         0 0 18px rgba(34,211,238,.10);
-
-    backdrop-filter:blur(8px);
-
 }
 
 #miniBeadRoad{
-
     display:block;
-
     margin:auto;
 
     width:170px;
-
     height:72px;
 
     background:#000;
-
+    border:1px solid #334155;
     border-radius:10px;
 
-    border:1px solid #334155;
-
+    pointer-events:none;
 }
 
+#miniControls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+
+    margin-top:10px;
+
+    position:relative;
+    z-index:20;
+}
+
+#miniControls button{
+    width:34px;
+    height:34px;
+
+    border:none;
+    border-radius:50%;
+
+    color:#fff;
+    font-size:13px;
+    font-weight:900;
+
+    cursor:pointer;
+}
+
+.miniP{background:#2563eb;}
+.miniB{background:#dc2626;}
+.miniT{background:#16a34a;}
+.miniU{background:#64748b;}
+.miniC{
+    background:#0f172a;
+    border:1px solid #334155;
+}
 .q-metrics{display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:25px;}
 .metric-card{background:rgba(15,23,42,0.5); padding:15px; border-radius:20px; border:1px solid rgba(255,255,255,0.05); text-align:center;}
 .metric-label{font-size:10px; color:var(--gray); margin-bottom:6px; text-transform:uppercase; font-weight:bold; letter-spacing:1px;}
@@ -747,6 +772,78 @@ body{
     }
 
 }
+/* ===== FLOATING MINI CONTROLS ===== */
+
+#miniControls{
+
+display:flex;
+justify-content:center;
+align-items:center;
+gap:8px;
+
+margin:10px auto 0;
+padding:6px 10px;
+
+width:max-content;
+
+background:rgba(15,23,42,.75);
+backdrop-filter:blur(8px);
+
+border:1px solid rgba(34,211,238,.15);
+border-radius:999px;
+
+box-shadow:
+0 8px 20px rgba(0,0,0,.45),
+0 0 15px rgba(34,211,238,.08);
+
+}
+
+#miniControls button{
+
+width:34px;
+height:34px;
+
+border:none;
+border-radius:50%;
+
+font-size:13px;
+font-weight:900;
+
+color:#fff;
+cursor:pointer;
+
+transition:.18s;
+
+}
+
+#miniControls button:hover{
+transform:translateY(-2px);
+}
+
+#miniControls button:active{
+transform:scale(.92);
+}
+
+.miniP{
+background:#2563eb;
+}
+
+.miniB{
+background:#dc2626;
+}
+
+.miniT{
+background:#16a34a;
+}
+
+.miniU{
+background:#64748b;
+}
+
+.miniC{
+background:#0f172a;
+border:1px solid #334155;
+}
 </style>
 </head>
 <body>
@@ -825,11 +922,10 @@ QUANTUM ENGINE V12 • EXPIRE : 27 ก.ค. 2569
                <div class="q-title">ระบบวิเคราะห์ AI ควอนตัม</div>
                 <div id="shoeProfile">ANALYZING...</div>
             </div>
-
-            <div class="q-main">
-                <div id="qPredict" class="side-wait">WAITING</div>
-                <div id="aiReasoning">รวบรวมข้อมูล DNA Cross-Validation...</div>
-            </div>
+<div class="q-main">
+    <div id="qPredict" class="side-wait">WAITING</div>
+    <div id="aiReasoning">รวบรวมข้อมูล DNA Cross-Validation...</div>
+</div>
 
 <div id="miniRoadBox">
 
@@ -839,48 +935,56 @@ QUANTUM ENGINE V12 • EXPIRE : 27 ก.ค. 2569
         height="72">
     </canvas>
 
+    <div id="miniControls">
+
+        <button type="button" class="miniP" onclick="add('P')">P</button>
+        <button type="button" class="miniB" onclick="add('B')">B</button>
+        <button type="button" class="miniT" onclick="add('T')">T</button>
+        <button type="button" class="miniU" onclick="undo()">↶</button>
+        <button type="button" class="miniC" onclick="clearAll()">✕</button>
+
+    </div>
+
 </div>
 
-     <div class="q-metrics">
+<div class="q-metrics">
 
-    <div class="metric-card">
-        <div class="metric-label">ความน่าจะเป็นตาถัดไป</div>
-        <div id="qConfidence" class="metric-value">0%</div>
-    </div>
+<div class="metric-card">
+    <div class="metric-label">ความน่าจะเป็นตาถัดไป</div>
+    <div id="qConfidence" class="metric-value">0%</div>
+</div>
 
-    <div class="metric-card">
-        <div class="metric-label">จำนวนระบบที่เห็นตรงกัน</div>
-        <div id="qConsensus" class="metric-value">0 / 9</div>
-    </div>
+<div class="metric-card">
+    <div class="metric-label">จำนวนระบบที่เห็นตรงกัน</div>
+    <div id="qConsensus" class="metric-value">0 / 9</div>
+</div>
 
-    <div class="metric-card">
-        <div class="metric-label">Entropy</div>
-        <div id="entropyValue" class="metric-value">0%</div>
-    </div>
+<div class="metric-card">
+    <div class="metric-label">ความไม่แน่นอน (Entropy)</div>
+    <div id="entropyValue" class="metric-value">0%</div>
+</div>
 
-    <div class="metric-card">
-        <div class="metric-label">Stability</div>
-        <div id="stabilityValue" class="metric-value">0%</div>
+<div class="metric-card">
+    <div class="metric-label">เสถียรภาพของแนวโน้ม</div>
+    <div id="stabilityValue" class="metric-value">0%</div>
 </div>
 
 <!-- ===== AI LEARNING PANEL ===== -->
 
-<div class="ai-learning">
+<div class="learning-card">
+    <div class="metric-label">ระบบเรียนรู้ AI</div>
+    <div id="learningValue" class="metric-value">0%</div>
+</div>
 
-    <div class="learning-card">
-        <div class="metric-label">Learning Engine</div>
-        <div id="learningValue" class="metric-value">0%</div>
-    </div>
+<div class="learning-card">
+    <div class="metric-label">ฐานข้อมูลย้อนหลัง</div>
+    <div id="historyValue" class="metric-value">0</div>
+</div>
 
-    <div class="learning-card">
-        <div class="metric-label">Historical Database</div>
-        <div id="historyValue" class="metric-value">0</div>
-    </div>
-
-    <div class="learning-card">
-        <div class="metric-label">Similar Shoe Search</div>
-        <div id="shoeMatchValue" class="metric-value">0%</div>
-    </div>
+<div class="learning-card">
+    <div class="metric-label">ค้นหารูปแบบใกล้เคียง</div>
+    <div id="shoeMatchValue" class="metric-value">0%</div>
+</div>
 
 </div>
 
@@ -897,23 +1001,32 @@ QUANTUM ENGINE V12 • EXPIRE : 27 ก.ค. 2569
         </div>
     </div>
 
-    <div class="adaptive-card">
-        <div class="metric-label">
-            Regime Detection
-        </div>
-        <div id="regimeValue" class="metric-value">
-            -
-        </div>
+<div class="adaptive-card">
+    <div class="metric-label">
+        การเรียนรู้น้ำหนักอัตโนมัติ
     </div>
+    <div id="adaptiveWeight" class="metric-value">
+        1.00
+    </div>
+</div>
 
-    <div class="adaptive-card">
-        <div class="metric-label">
-            Consensus AI V2
-        </div>
-        <div id="consensusV2" class="metric-value">
-            0%
-        </div>
+<div class="adaptive-card">
+    <div class="metric-label">
+        สถานะของเกม
     </div>
+    <div id="regimeValue" class="metric-value">
+        -
+    </div>
+</div>
+
+<div class="adaptive-card">
+    <div class="metric-label">
+        AI เห็นตรงกัน
+    </div>
+    <div id="consensusV2" class="metric-value">
+        0%
+    </div>
+</div>
 
 </div> <!-- ปิด adaptive-ai -->
 
@@ -925,27 +1038,25 @@ QUANTUM ENGINE V12 • EXPIRE : 27 ก.ค. 2569
 <!-- ========================= -->
 
 <div class="dashboard-panel">
+<div class="dashboard-card">
+    <div class="dashboard-title">คะแนนภาพรวม</div>
+    <div id="marketScore" class="dashboard-value">0</div>
+</div>
 
-    <div class="dashboard-card">
-        <div class="dashboard-title">Market Score</div>
-        <div id="marketScore" class="dashboard-value">0</div>
-    </div>
+<div class="dashboard-card">
+    <div class="dashboard-title">โมเมนตัม</div>
+    <div id="momentumValue" class="dashboard-value">0%</div>
+</div>
 
-    <div class="dashboard-card">
-        <div class="dashboard-title">Momentum</div>
-        <div id="momentumValue" class="dashboard-value">0%</div>
-    </div>
+<div class="dashboard-card">
+    <div class="dashboard-title">พลังสัญญาณ</div>
+    <div id="signalPower" class="dashboard-value">0%</div>
+</div>
 
-    <div class="dashboard-card">
-        <div class="dashboard-title">Signal Power</div>
-        <div id="signalPower" class="dashboard-value">0%</div>
-    </div>
-
-    <div class="dashboard-card">
-        <div class="dashboard-title">Noise</div>
-        <div id="noiseValue" class="dashboard-value">0%</div>
-    </div>
-
+<div class="dashboard-card">
+    <div class="dashboard-title">สัญญาณรบกวน</div>
+    <div id="noiseValue" class="dashboard-value">0%</div>
+</div>
 </div>
 
 
@@ -968,52 +1079,47 @@ QUANTUM ENGINE V12 • EXPIRE : 27 ก.ค. 2569
 
 <div class="chart-panel">
 
-    <div class="chart-title">
-        AI Confidence Timeline
+<div class="chart-title">
+    กราฟความมั่นใจของ AI
+</div>
+
+<div class="timelineStats">
+
+    <div class="timelineCard">
+        <div class="timelineLabel">ล่าสุด</div>
+        <div id="timelineCurrent" class="timelineValue">
+            0%
+        </div>
     </div>
 
-    <div class="timelineStats">
-
-        <div class="timelineCard">
-            <div class="timelineLabel">Current</div>
-            <div id="timelineCurrent"
-                 class="timelineValue">
-                 0%
-            </div>
+    <div class="timelineCard">
+        <div class="timelineLabel">ค่าเฉลี่ย</div>
+        <div id="timelineAverage" class="timelineValue">
+            0%
         </div>
-
-        <div class="timelineCard">
-            <div class="timelineLabel">Average</div>
-            <div id="timelineAverage"
-                 class="timelineValue">
-                 0%
-            </div>
-        </div>
-
-        <div class="timelineCard">
-            <div class="timelineLabel">Peak</div>
-            <div id="timelinePeak"
-                 class="timelineValue">
-                 0%
-            </div>
-        </div>
-
-        <div class="timelineCard">
-            <div class="timelineLabel">Min</div>
-            <div id="timelineMin"
-                 class="timelineValue">
-                 0%
-            </div>
-        </div>
-
     </div>
 
-    <canvas
-        id="confidenceChart"
-        width="700"
-        height="260">
-    </canvas>
+    <div class="timelineCard">
+        <div class="timelineLabel">สูงสุด</div>
+        <div id="timelinePeak" class="timelineValue">
+            0%
+        </div>
+    </div>
 
+    <div class="timelineCard">
+        <div class="timelineLabel">ต่ำสุด</div>
+        <div id="timelineMin" class="timelineValue">
+            0%
+        </div>
+    </div>
+
+</div>
+
+<canvas
+    id="confidenceChart"
+    width="700"
+    height="260">
+</canvas>
 </div>
 
 
@@ -1755,6 +1861,17 @@ buildPatternMemory();
 processDNAValidation();
 
 updateUI();
+
+}
+function add(side){
+
+    history.push(side);
+
+    buildPatternMemory();
+
+    processDNAValidation();
+
+    updateUI();
 
 }
 function undo(){
