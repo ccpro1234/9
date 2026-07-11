@@ -93,6 +93,68 @@ letter-spacing:1px;
         0 10px 25px rgba(0,0,0,.45),
         0 0 18px rgba(34,211,238,.10);
 }
+#miniRoadStats{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:8px;
+    gap:4px;
+
+}
+
+.miniStat{
+
+    flex:1;
+
+    text-align:center;
+
+    padding:4px;
+
+    border-radius:8px;
+
+    background:rgba(255,255,255,.05);
+
+}
+
+.miniStat span{
+
+    display:block;
+
+    font-size:9px;
+
+    color:#94a3b8;
+
+}
+
+.miniStat b{
+
+    display:block;
+
+    margin-top:2px;
+
+    font-size:13px;
+
+    font-weight:900;
+
+}
+
+.miniPStat b{
+    color:#3b82f6;
+}
+
+.miniBStat b{
+    color:#ef4444;
+}
+
+.miniTStat b{
+    color:#22c55e;
+}
+
+.miniAllStat b{
+    color:#facc15;
+}
 
 #miniBeadRoad{
     display:block;
@@ -929,11 +991,37 @@ QUANTUM ENGINE V12 • EXPIRE : 27 ก.ค. 2569
 
 <div id="miniRoadBox">
 
+    <div id="miniRoadStats">
+
+        <div class="miniStat miniPStat">
+            <span>P</span>
+            <b id="miniPCount">0</b>
+        </div>
+
+        <div class="miniStat miniBStat">
+            <span>B</span>
+            <b id="miniBCount">0</b>
+        </div>
+
+        <div class="miniStat miniTStat">
+            <span>T</span>
+            <b id="miniTCount">0</b>
+        </div>
+
+        <div class="miniStat miniAllStat">
+            <span>Total</span>
+            <b id="miniTotalCount">0</b>
+        </div>
+
+    </div>
+
     <canvas
         id="miniBeadRoad"
         width="170"
         height="72">
     </canvas>
+
+</div>
 
     <div id="miniControls">
 
@@ -1911,14 +1999,21 @@ function updateUI() {
     const pred = calculateQuantumPrediction(),
           shoe = analyzeShoeProfile();
 
-    const p = history.filter(x => x === "P").length;
-    const b = history.filter(x => x === "B").length;
-    const t = history.filter(x => x === "T").length;
+const p = history.filter(x => x === "P").length;
+const b = history.filter(x => x === "B").length;
+const t = history.filter(x => x === "T").length;
 
-    document.getElementById("pCount").innerText = p;
-    document.getElementById("bCount").innerText = b;
-    document.getElementById("tCount").innerText = t;
-    document.getElementById("totalCount").innerText = history.length;
+document.getElementById("pCount").innerText = p;
+document.getElementById("bCount").innerText = b;
+document.getElementById("tCount").innerText = t;
+document.getElementById("totalCount").innerText = history.length;
+
+/* ===== MINI ROAD ===== */
+
+document.getElementById("miniPCount").innerText = p;
+document.getElementById("miniBCount").innerText = b;
+document.getElementById("miniTCount").innerText = t;
+document.getElementById("miniTotalCount").innerText = history.length;
 
     document.getElementById("qPredict").innerText =
     pred.side
