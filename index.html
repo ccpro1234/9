@@ -1054,6 +1054,25 @@ background:#64748b;
 background:#0f172a;
 border:1px solid #334155;
 }
+#expireOverlay{
+
+position:fixed;
+
+inset:0;
+
+display:none;
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+background:rgba(2,6,23,.96);
+
+z-index:999998;
+
+}
 </style>
 </head>
 <body>
@@ -1265,8 +1284,8 @@ QUANTUM ENGINE V12 • EXPIRE : 27 ก.ค. 2569
 </div>
 
 </div> <!-- ปิด adaptive-ai -->
-
 </div> <!-- ปิด quantumBox -->
+
 
 
 <!-- ========================= -->
@@ -1623,103 +1642,63 @@ return {
     desc:"รูปแบบสุ่ม"
 };
 }
-function searchPattern(){
 
-    const h=history.filter(x=>x!="T");
-
-    let P=0;
-
-    let B=0;
-
-    for(let len=10;len>=3;len--){
-
-        if(h.length<len) continue;
-
-        const key=h.slice(-len).join("");
-
-        const node=patternDB.get(key);
-
-        if(!node) continue;
-
-        const reliability=patternReliability(node);
-
-        const strength=patternStrength(node);
-
-        const weight=len*reliability*strength;
-
-        P+=(node.P/node.total)*weight;
-
-        B+=(node.B/node.total)*weight;
-
-    }
-
-    return{
-
-        scoreP:P,
-
-        scoreB:B
-
-    };
-
-}
 // =======================
 // Transition Matrix Engine
 // =======================
 
-function searchTransition(){
+function searchPattern(){
 
-    const h = history.filter(x=>x!="T");
+    const h = history.filter(x => x != "T");
 
-    if(h.length<2){
+    let P = 0;
+    let B = 0;
 
-        return {P:0,B:0};
+    for(let len = 10; len >= 3; len--){
+
+        if(h.length < len) continue;
+
+        const key = h.slice(-len).join("");
+
+        const node = patternDB.get(key);
+
+        if(!node) continue;
+
+        const reliability = patternReliability(node);
+
+        const strength = patternStrength(node);
+
+        // =========================
+        // Recency / Age Decay
+        // =========================
+
+        // Pattern ยาวให้ความสำคัญมากกว่า
+        const lenWeight = 1 + (len * 0.08);
+
+        // Pattern ล่าสุดให้โบนัส
+        const recentBoost = 1 + ((len - 3) / 7) * 0.35;
+
+        // Pattern ที่มีข้อมูลมากเชื่อถือได้กว่า
+        const dbFactor = Math.min(node.total / 40, 1);
+
+        // น้ำหนักสุดท้าย
+        const weight =
+            lenWeight *
+            recentBoost *
+            reliability *
+            strength *
+            dbFactor;
+
+        P += (node.P / node.total) * weight;
+        B += (node.B / node.total) * weight;
 
     }
 
-    let PP=0;
-    let PB=0;
-    let BP=0;
-    let BB=0;
+    return {
 
-    for(let i=1;i<h.length;i++){
+        scoreP: P,
 
-        const a=h[i-1];
-        const b=h[i];
-
-        if(a=="P"&&b=="P") PP++;
-        if(a=="P"&&b=="B") PB++;
-        if(a=="B"&&b=="P") BP++;
-        if(a=="B"&&b=="B") BB++;
-
-    }
-
-    const last=h[h.length-1];
-
-    if(last=="P"){
-
-        const total=PP+PB;
-
-        if(total==0) return {P:0,B:0};
-
-        return{
-
-            P:PP/total,
-
-            B:PB/total
-
-        };
-
-    }
-
-    const total=BP+BB;
-
-    if(total==0) return {P:0,B:0};
-
-    return{
-
-        P:BP/total,
-
-        B:BB/total
+        scoreB: B
 
     };
 
@@ -1802,6 +1781,56 @@ const transition=searchTransition();
     transitionB:transition.B
 
 };
+}
+// =======================
+// Transition Engine
+// =======================
+
+function searchTransition(){
+
+    const h = history.filter(x => x!="T");
+
+    if(h.length < 2){
+
+        return{
+            P:0,
+            B:0
+        };
+
+    }
+
+    let pScore=0;
+    let bScore=0;
+
+    const last=h[h.length-1];
+
+    const prev=h[h.length-2];
+
+    if(last==="P") pScore+=1;
+    else bScore+=1;
+
+    if(last===prev){
+
+        if(last==="P") pScore+=0.5;
+        else bScore+=0.5;
+
+    }else{
+
+        if(last==="P") bScore+=0.5;
+        else pScore+=0.5;
+
+    }
+
+    const total=pScore+bScore;
+
+    return{
+
+        P:pScore/total,
+
+        B:bScore/total
+
+    };
+
 }
 // ======================
 // ENTROPY ENGINE V13
@@ -1886,23 +1915,57 @@ regimeBonus=0.9;
 
 }
 const meta=metaEngine();
+// ===================================
+// META DECISION LAYER
+// ===================================
+
+const patternDiff =
+Math.abs(meta.patternP-meta.patternB);
+
+const markovDiff =
+Math.abs(meta.markovP-meta.markovB);
+
+const transitionDiff =
+Math.abs(meta.transitionP-meta.transitionB);
+
+let patternWeight=1;
+let markovWeight=1;
+let transitionWeight=1;
+
+// Pattern เด่น
+if(patternDiff>2){
+
+    patternWeight=1.80;
+
+}
+
+// Markov เด่น
+if(markovDiff>0.25){
+
+    markovWeight=1.60;
+
+}
+
+// Transition เด่น
+if(transitionDiff>0.20){
+
+    transitionWeight=1.40;
+
+}
 
 let scoreP = 0;
 let scoreB = 0;
 let consensus = 0;
 
 // Pattern Memory
-scoreP += meta.patternP;
+scoreP += meta.patternP * patternWeight;
+scoreB += meta.patternB * patternWeight;
 
-scoreB += meta.patternB;
+scoreP += meta.markovP * 8 * markovWeight;
+scoreB += meta.markovB * 8 * markovWeight;
 
-scoreP += meta.markovP*8;
-
-scoreB += meta.markovB*8;
-
-scoreP += meta.transitionP*6;
-
-scoreB += meta.transitionB*6;
+scoreP += meta.transitionP * 6 * transitionWeight;
+scoreB += meta.transitionB * 6 * transitionWeight;
 
 // =========================
 // Pattern Memory Engine
@@ -1947,19 +2010,45 @@ if (pred === "B") {
     scoreB += weight;
 }
     });
-    consensus = 0;
+// ===================================
+// WEIGHTED CONSENSUS
+// ===================================
 
-SYSTEMS_DEF.forEach(sys => {
+let totalConsensusWeight = 0;
 
-    const p = sys.fn(hNoT);
+// ฝั่งที่คะแนนรวมชนะ
+const winner = scoreP > scoreB ? "P" : "B";
 
-    if (p === (scoreP > scoreB ? "P" : "B")) {
+// รีเซ็ต Consensus
+consensus = 0;
 
-        consensus++;
+SYSTEMS_DEF.forEach((sys, i) => {
+
+    const pred = sys.fn(hNoT);
+
+    if (!pred) return;
+
+    // Reliability ของแต่ละระบบ
+    const reliability =
+        sysWeights[i] *
+        (sysWinRates[i] || 0.50);
+
+    totalConsensusWeight += reliability;
+
+    // ถ้าทายตรงกับฝั่งที่ชนะ
+    if (pred === winner) {
+
+        consensus += reliability;
 
     }
 
 });
+
+// Normalize ให้เหลือ 0-1
+consensus = totalConsensusWeight > 0
+    ? consensus / totalConsensusWeight
+    : 0;
+
 const total = scoreP + scoreB;
 
 if (total === 0) {
@@ -1968,19 +2057,19 @@ if (total === 0) {
 
     return {
 
-        side:null,
+        side: null,
 
-        prob:0,
+        prob: 0,
 
         consensus,
 
-        entropy:entropyData.entropy,
+        entropy: entropyData.entropy,
 
-        randomness:entropyData.randomness,
+        randomness: entropyData.randomness,
 
-        stability:entropyData.stability,
+        stability: entropyData.stability,
 
-        reason:"รวบรวมข้อมูล DNA..."
+        reason: "รวบรวมข้อมูล DNA..."
 
     };
 
@@ -2015,8 +2104,8 @@ const entropyFactor =
 1-(entropyData.entropy*0.45);
 
 const consensusFactor =
-0.70+
-(consensus/SYSTEMS_DEF.length)*0.30;
+0.70 +
+consensus * 0.30;
 
 // ===== แก้ตรงนี้ =====
 
@@ -2176,7 +2265,7 @@ console.log(
 (pred.stability ?? 0).toFixed(1)
 );
    document.getElementById("qConsensus").innerText =
-(pred.consensus ?? 0) + " / 9";
+Math.round((pred.consensus ?? 0) * 100) + "%"
 const entropyData = calculateEntropy();
 
 document.getElementById("entropyValue").innerText =
@@ -2231,11 +2320,7 @@ shoe.type;
 // =========================
 
 const consensusV2 = Math.round(
-
-(pred.consensus / SYSTEMS_DEF.length)
-
-*100
-
+pred.consensus * 100
 );
 
 document.getElementById("consensusV2").innerText =
@@ -2250,7 +2335,7 @@ document.getElementById("momentumValue").innerText =
 Math.round(pred.stability ?? 0) + "%";
 
 document.getElementById("signalPower").innerText =
-Math.round((pred.consensus/9)*100) + "%";
+Math.round(pred.consensus * 100) + "%";
 
 document.getElementById("noiseValue").innerText =
 Math.round(pred.randomness ?? 100) + "%";
@@ -2262,10 +2347,16 @@ document.getElementById("aiReasoning").innerText = pred.reason;
 document.getElementById("shoeProfile").innerText = shoe.desc;
 
 // ===== AI Confidence History =====
-confidenceHistory.push(pred.prob);
+if(pred.side){
 
-if(confidenceHistory.length > 40){
-    confidenceHistory.shift();
+    confidenceHistory.push(pred.prob);
+
+    if(confidenceHistory.length>40){
+
+        confidenceHistory.shift();
+
+    }
+
 }
 
 // ===== Refresh UI =====
@@ -2671,15 +2762,21 @@ loginErrEl.innerText="เชื่อมต่อ License Server ไม่สำ
 
 
 }
-window.onload = ()=>{
+window.onload=()=>{
 
-    const today = new Date();
+    const today=new Date();
 
-    if(today > EXPIRE_DATE){
+    if(today>EXPIRE_DATE){
 
         document.getElementById("expireOverlay").style.display="flex";
 
+        return;
+
     }
+
+    buildPatternMemory();
+
+    processDNAValidation();
 
 };
 
