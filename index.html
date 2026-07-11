@@ -17,7 +17,19 @@
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{margin:0;background:var(--bg-deep);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:white;overflow-x:hidden;}
-.app{width:100vw;height:100vh;margin:0 auto;position:relative;display:flex;flex-direction:column;max-width:1000px;}
+.app{
+    width:100%;
+    max-width:1000px;
+    margin:0 auto;
+
+    position:relative;
+
+    display:flex;
+    flex-direction:column;
+
+    min-height:100vh;
+    height:auto;
+}
 
 /* ===== OVERLAYS ===== */
 #loginOverlay{
@@ -49,12 +61,40 @@ letter-spacing:1px;
 }
 
 /* ===== QUANTUM CORE (3 CORE SYSTEMS) ===== */
-.top{padding:16px;display:flex;flex-direction:column;gap:12px;}
+.top{
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+
+    width:100%;
+
+    overflow:visible;
+}
 #quantumBox{
-    background:radial-gradient(circle at top left, rgba(34,211,238,0.15), transparent 70%), linear-gradient(180deg,var(--bg-card),var(--bg-deep));
-    border-radius:28px; padding:24px; border:1px solid rgba(34,211,238,0.4);
-    box-shadow:0 0 50px rgba(0,0,0,0.7), 0 0 25px rgba(34,211,238,0.15) inset;
-    position:relative; overflow:hidden;
+    background:
+        radial-gradient(circle at top left,
+        rgba(34,211,238,.15), transparent 70%),
+        linear-gradient(180deg,var(--bg-card),var(--bg-deep));
+
+    border-radius:28px;
+    padding:24px;
+
+    border:1px solid rgba(34,211,238,.4);
+
+    box-shadow:
+        0 0 50px rgba(0,0,0,.7),
+        0 0 25px rgba(34,211,238,.15) inset;
+
+    position:relative;
+    overflow:hidden;
+
+    /* เพิ่มส่วนนี้ */
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    width:100%;
+    box-sizing:border-box;
 }
 #quantumBox::before{
     content:""; position:absolute; top:0; left:-100%; width:100%; height:100%;
@@ -204,28 +244,38 @@ letter-spacing:1px;
     background:#0f172a;
     border:1px solid #334155;
 }
-.q-metrics{display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:25px;}
+.q-metrics{
+
+display:grid;
+
+grid-template-columns:repeat(2,minmax(0,1fr));
+
+gap:15px;
+
+margin-bottom:20px;
+
+}
 .metric-card{background:rgba(15,23,42,0.5); padding:15px; border-radius:20px; border:1px solid rgba(255,255,255,0.05); text-align:center;}
 .metric-label{font-size:10px; color:var(--gray); margin-bottom:6px; text-transform:uppercase; font-weight:bold; letter-spacing:1px;}
 .metric-value{font-size:22px; font-weight:900; color:white;}
 /* ===== AI LEARNING ===== */
 
 .ai-learning{
-
 display:grid;
-grid-template-columns:repeat(3,1fr);
+grid-template-columns:repeat(3,minmax(0,1fr));
 gap:12px;
-margin-top:16px;
-
+width:100%;
+margin-bottom:18px;
 }
-
 .learning-card{
 
-background:rgba(15,23,42,.55);
-border:1px solid rgba(34,211,238,.15);
-border-radius:18px;
-padding:12px;
-text-align:center;
+    background:rgba(15,23,42,.55);
+    border:1px solid rgba(34,211,238,.15);
+    border-radius:18px;
+    padding:12px;
+    text-align:center;
+
+    min-height:88px;
 
 }
 
@@ -242,19 +292,28 @@ font-weight:900;
 .adaptive-ai{
 
 display:grid;
-grid-template-columns:repeat(3,1fr);
+
+grid-template-columns:repeat(2,minmax(0,1fr));
+
 gap:12px;
-margin-top:14px;
+
+margin-bottom:25px;
 
 }
 
 .adaptive-card{
 
-background:rgba(15,23,42,.55);
-border:1px solid rgba(250,204,21,.18);
-border-radius:18px;
-padding:12px;
-text-align:center;
+    background:rgba(15,23,42,.55);
+
+    border:1px solid rgba(250,204,21,.18);
+
+    border-radius:18px;
+
+    padding:12px;
+
+    text-align:center;
+
+    min-height:90px;
 
 }
 
@@ -271,27 +330,35 @@ color:var(--gold);
 
 .dashboard-panel{
 
-margin-top:18px;
+    width:100%;
 
-display:grid;
+    display:grid;
 
-grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(4,minmax(0,1fr));
 
-gap:12px;
+    gap:12px;
+
+    margin-top:30px;
+
+margin-bottom:30px;
+
+    position:relative;
 
 }
 
 .dashboard-card{
 
-background:rgba(15,23,42,.55);
+    background:rgba(15,23,42,.55);
 
-border-radius:18px;
+    border-radius:18px;
 
-padding:14px;
+    padding:14px;
 
-border:1px solid rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.08);
 
-text-align:center;
+    text-align:center;
+
+    min-height:90px;
 
 }
 
@@ -317,32 +384,55 @@ margin-bottom:6px;
 /* ===========================
 AI CHART
 =========================== */
+.chart-title{
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:#fff;
+
+    margin-bottom:20px;
+
+}
 
 .chart-panel{
 
-margin-top:18px;
+    width:100%;
 
-background:rgba(15,23,42,.45);
+    min-height:430px;
 
-padding:15px;
+    height:auto;
 
-border-radius:18px;
+   margin-bottom:30px;
 
-border:1px solid rgba(255,255,255,.08);
+    box-sizing:border-box;
+
+    background:rgba(15,23,42,.45);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:18px;
+
+    padding:15px;
+
+    overflow:visible;
 
 }
+
+
 
 /* ===== Timeline Stats ===== */
 
 .timelineStats{
 
-display:grid;
+    display:grid;
 
-grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(4,1fr);
 
-gap:12px;
+    gap:12px;
 
-margin:15px 0;
+    margin:20px 0;
 
 }
 
@@ -384,11 +474,11 @@ color:#22d3ee;
 
 #confidenceChart{
 
-width:100%;
+    display:block;
 
-height:260px;
+    width:100%;
 
-display:block;
+    height:260px;
 
 }
 
@@ -402,12 +492,32 @@ display:block;
 .btn-util{background:#334155; font-size:12px !important; box-shadow:0 5px 0 #1e293b;}
 
 /* ===== BODY & HISTORY ===== */
-.body{flex:1; display:flex; flex-direction:column; overflow:hidden; padding:0 16px 16px;}
-.history-row{
+.body{
+    flex:1;
+
     display:flex;
     flex-direction:column;
+
+    overflow:visible;
+
+   padding:35px 16px 20px;
+
+    position:relative;
+}
+.history-row{
+
+    display:flex;
+
+    flex-direction:column;
+
     align-items:center;
+
     gap:12px;
+
+    margin-top:20px;
+
+    margin-bottom:20px;
+
 }
 
 canvas.road{
@@ -424,10 +534,48 @@ canvas.road{
     flex:none;
 }
 
-.systems-grid{flex:1; overflow-y:auto; display:grid; grid-template-columns:1fr; gap:10px; padding-right:5px;}
+.systems-grid{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:10px;
+
+    margin-top:15px;
+
+    overflow:visible;
+
+    flex:none;
+
+    width:100%;
+
+    padding-right:0;
+
+}
 .sys-row{
-    background:var(--bg-card); border-radius:18px; padding:15px; display:flex; align-items:center;
-    border:1px solid rgba(255,255,255,0.04); position:relative; overflow:hidden; transition: 0.3s;
+
+    background:var(--bg-card);
+
+    border-radius:18px;
+
+    padding:15px;
+
+    display:flex;
+
+    align-items:center;
+
+    border:1px solid rgba(255,255,255,0.04);
+
+    position:relative;
+
+    z-index:1;
+
+    overflow:visible;
+
+    transition:.3s;
+
+    margin-bottom:10px;
+
 }
 .sys-info{
     width:90px;
@@ -1203,11 +1351,7 @@ QUANTUM ENGINE V12 • EXPIRE : 27 ก.ค. 2569
 
 </div>
 
-<canvas
-    id="confidenceChart"
-    width="700"
-    height="260">
-</canvas>
+<canvas id="confidenceChart"></canvas>
 </div>
 
 
@@ -2302,14 +2446,18 @@ function drawConfidenceChart(){
     const canvas = document.getElementById("confidenceChart");
     const ctx = canvas.getContext("2d");
 
-    const w = canvas.width;
-    const h = canvas.height;
+    const rect = canvas.getBoundingClientRect();
+    const ratio = window.devicePixelRatio || 1;
+
+    canvas.width  = rect.width * ratio;
+    canvas.height = rect.height * ratio;
+
+    ctx.setTransform(ratio,0,0,ratio,0,0);
+
+    const w = rect.width;
+    const h = rect.height;
 
     ctx.clearRect(0,0,w,h);
-
-    // ===== Background =====
-    ctx.fillStyle = "#08111f";
-    ctx.fillRect(0,0,w,h);
 
     // ===== Grid =====
     ctx.strokeStyle = "rgba(255,255,255,.08)";
